@@ -3,11 +3,13 @@ import { Text, StyleSheet, View,ScrollView } from 'react-native'
 import SearchBar from '../components/SearchBar';
 import Zomato from '../api/Zomato'
 import ResultsList from '../components/ResultsList';
+import { ProgressDialog } from 'react-native-simple-dialogs';
 class SearchScreen extends Component {
     state = {
         term:"",
         results:[],
-        error:""
+        error:"",
+        progressVisible:true
     }
     setTerm = (newTerm) => {
         this.setState({
@@ -17,18 +19,19 @@ class SearchScreen extends Component {
 
     setResults = (results) => {
         this.setState({
-            results
+            results,
+            progressVisible:false
         });
     }
     
     setError = (error) => {
         this.setState({
-            error
+            error,
+            progressVisible:false
         })
     }
 
     searchApi = async (searchTerm) => {
-        console.log(searchTerm);
         try {
             const response = await Zomato.get('/search',{
                 params: { q:searchTerm } 
@@ -51,6 +54,13 @@ class SearchScreen extends Component {
         }
         return []
     }
+
+    apiCall = () => {
+        this.setState({
+            progressVisible:true
+        })
+        return this.searchApi(this.state.term)
+    }
     
     render() {
         const {term,results,error} = this.state;
@@ -60,8 +70,13 @@ class SearchScreen extends Component {
                 <SearchBar 
                     term={term} 
                     onTermChange={this.setTerm}
-                    onTermSubmit={()=>this.searchApi(term)} />
+                    onTermSubmit={this.apiCall} />
                 <Text>{error?error:null}</Text>
+                <ProgressDialog
+                    visible={this.state.progressVisible}
+                    title="Resturant Search"
+                    message="Please, wait..."
+                />
                 <ScrollView>
                     <ResultsList 
                         title="Cost Effective" 
