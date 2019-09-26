@@ -28,9 +28,10 @@ class SearchScreen extends Component {
     }
 
     searchApi = async (searchTerm) => {
+        console.log(searchTerm);
         try {
             const response = await Zomato.get('/search',{
-                q:searchTerm
+                params: { q:searchTerm } 
             });
             this.setResults(response.data.restaurants);
         } catch(e) {
