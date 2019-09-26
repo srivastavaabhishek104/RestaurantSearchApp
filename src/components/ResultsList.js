@@ -5,7 +5,6 @@ import ResultsDetail from '../components/ResultsDetail'
     render() {
         const {title,results,navigation} = this.props;
         const result = results()
-        console.log(result);
         
         return (
             result.length ? <View style={styles.container}>
